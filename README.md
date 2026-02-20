@@ -1,7 +1,7 @@
 # Sales Forecasting Dashboard 📊
 
 A machine learning project to **forecast future sales** using historical sales data.
-This project includes data exploration, visualization, model training, and deployment through an interactive **Streamlit dashboard**.
+This project includes **SQL-based data exploration**, Python data processing, model training, and deployment through an interactive **Streamlit dashboard**.
 
 ---
 
@@ -11,6 +11,7 @@ This project includes data exploration, visualization, model training, and deplo
 * [Dataset](#dataset)
 * [Project Structure](#project-structure)
 * [Installation](#installation)
+* [SQL Integration](#sql-integration)
 * [Usage](#usage)
 * [Results](#results)
 * [Future Improvements](#future-improvements)
@@ -26,15 +27,17 @@ This project provides:
 
 * Interactive visualizations of historical sales data
 * Forecasting using machine learning models
+* SQL-based data exploration for easy querying
 * An easy-to-use **Streamlit dashboard** for non-technical users
 
-Technologies used:
+**Technologies used:**
 
 * **Python**
 * **Streamlit** (for interactive dashboard)
 * **scikit-learn / statsmodels** (for forecasting models)
 * **Pandas / NumPy** (for data processing)
 * **Matplotlib / Seaborn / Plotly** (for visualization)
+* **MySQL** (for data storage and querying)
 
 ---
 
@@ -42,8 +45,8 @@ Technologies used:
 
 The dashboard works with your own sales dataset.
 
-* Typical features include: `Date`, `Product`, `Region`, `Units Sold`, `Revenue`.
-* Forecasted variable: `Sales` or `Revenue`.
+* Typical features include: `Order_ID`, `Order_Date`, `Product`, `Region`, `Units Sold`, `Sales`, `Profit`, `Discount`.
+* Forecasted variable: `Sales`.
 
 > 📁 Sample dataset is included in the `data/` folder for testing purposes.
 
@@ -56,7 +59,7 @@ sales-forecasting-dashboard/
 │── app/               # Main Streamlit app
 │── dashboards/        # Visualization and UI components
 │── data/              # Sample sales datasets
-│── database/          # Database scripts
+│── database/          # SQL scripts and database setup
 │── notebooks/         # Jupyter notebooks for EDA & model training
 │── requirements.txt   # Python dependencies
 │── .gitignore
@@ -74,6 +77,55 @@ git clone https://github.com/magar-m31/sales-forecasting-dashboard.git
 cd sales-forecasting-dashboard
 pip install -r requirements.txt
 ```
+
+Make sure MySQL server is installed and running if using SQL queries.
+
+---
+
+## 🗄 SQL Integration
+
+Data can be explored and aggregated **directly using SQL**:
+
+**Example queries used in this project:**
+
+```sql
+-- Aggregate monthly sales
+SELECT
+    YEAR(Order_Date) AS Year,
+    MONTH(Order_Date) AS Month,
+    SUM(Sales) AS Monthly_Sales,
+    SUM(Quantity) AS Monthly_Quantity,
+    AVG(Sales) AS Avg_Order_Value,
+    COUNT(DISTINCT Customer_ID) AS Unique_Customers
+FROM sales_data
+GROUP BY YEAR(Order_Date), MONTH(Order_Date)
+ORDER BY Year, Month;
+
+-- Total sales by region
+SELECT Region, SUM(Sales) AS Total_Sales
+FROM sales_data
+GROUP BY Region
+ORDER BY Total_Sales DESC;
+```
+
+**Python + SQL Integration:**
+
+```python
+import mysql.connector
+import pandas as pd
+
+# Connect to MySQL
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='yourpassword',
+    database='sales_forecasting'
+)
+query = "SELECT * FROM sales_data"
+df = pd.read_sql(query, conn)
+```
+
+This allows **direct querying, aggregation, and joining** from Python for EDA and modeling.
 
 ---
 
@@ -103,17 +155,18 @@ Steps:
 ## 📈 Results
 
 * Visualized historical sales trends by product, region, and time
-* Predicted future sales using **[your model type]**
+* Predicted future sales using **Linear Regression**
+* SQL queries helped **aggregate monthly and regional sales**
 * Helps businesses plan inventory, marketing campaigns, and staffing
-  
-- Forecast accuracy (R²): 0.3031  
-- RMSE: $710.48  
-- MAE: $468.90  
 
-- Interpretation:
-  - R² of 0.3031 means the model explains ~30% of the variance in sales.
-  - On average, the prediction is off by $468.90.
+- Forecast accuracy (R²): 0.3031
+- RMSE: $710.48
+- MAE: $468.90
 
+**Interpretation:**
+
+* R² of 0.3031 means the model explains ~30% of the variance in sales.
+* On average, the prediction is off by $468.90.
 
 ---
 
@@ -123,6 +176,7 @@ Steps:
 * Add multiple forecasting models and allow comparison
 * Include automatic anomaly detection in sales data
 * Integrate real-time data streaming from a database
+* Add SQL-driven interactive dashboards
 
 ---
 
