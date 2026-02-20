@@ -105,7 +105,7 @@ Steps:
 * Visualized historical sales trends by product, region, and time
 * Predicted future sales using **[your model type]**
 * Helps businesses plan inventory, marketing campaigns, and staffing
-* 
+  
 - Forecast accuracy (R²): 0.3031  
 - RMSE: $710.48  
 - MAE: $468.90  
